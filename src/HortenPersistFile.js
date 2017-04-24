@@ -74,7 +74,7 @@ class HortenPersistFile extends H.Cursor {
 
     switch ( this.format ) {
       case 'yaml':
-        str = this.header() + yaml.safeDump( data )
+        str = this.header() + yaml.dump( data )
       break
 
       default:
