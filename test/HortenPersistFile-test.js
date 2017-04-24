@@ -13,8 +13,6 @@ const file = new HortenPersistFile( {
 
 const root = H.root
 
-file.create()
-
 mutate()
 
 function mutate() {

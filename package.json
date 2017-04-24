@@ -12,7 +12,7 @@
     "json",
     "yaml"
   ],
-  "author": "Samm Cooper <koopero@gmail.com>",
+  "author": "Samm Zuest Cooper <samm@sublight.ca>",
   "license": "MIT",
   "dependencies": {
     "fs-extra-promise": "^0.4.1",
@@ -20,5 +20,17 @@
     "js-yaml": "^3.6.1",
     "lodash": "^4.16.6",
     "moment": "^2.16.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koopero/horten-persist-file.git"
+  },
+  "bugs": {
+    "url": "https://github.com/koopero/horten-persist-file/issues"
+  },
+  "homepage": "https://github.com/koopero/horten-persist-file#readme"
 }
