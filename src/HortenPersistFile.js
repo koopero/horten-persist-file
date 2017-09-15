@@ -55,7 +55,6 @@ class HortenPersistFile extends H.Cursor {
     .then( this.format == 'yaml' ? yaml.load : JSON.stringify )
     .then( function ( data ) {
       self.patch( data )
-      self.emit('read', data, src )
       return data
     })
   }
