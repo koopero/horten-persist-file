@@ -1,7 +1,7 @@
 const test = require('./_test')
 
 const fs = require('fs-extra')
-    , path = require('path')
+const path = require('path')
 
 const HortenPersistFile = require('../index')
 

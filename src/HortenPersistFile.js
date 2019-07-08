@@ -1,9 +1,9 @@
 const H = require('horten')
-    , _ = require('lodash')
-    , fs = require('fs-extra-promise')
-    , path = require('path')
-    , yaml = require('js-yaml')
-    , moment = require('moment')
+const _ = require('lodash')
+const fs = require('fs-extra')
+const path = require('path')
+const yaml = require('js-yaml')
+const moment = require('moment')
 
 const DEFAULT_FILE = 'horten-persist-file.yaml'
 
@@ -23,7 +23,7 @@ class HortenPersistFile extends H.Cursor {
     this.file = path.resolve( options.file || DEFAULT_FILE )
     this.format = options.format == 'yaml' ? 'yaml'
       : ['.yaml','.yml'].indexOf( path.extname( this.file ) ) != -1 ? 'yaml'
-      : 'json'
+        : 'json'
 
     if ( options.open )
       this.open()
@@ -40,11 +40,10 @@ class HortenPersistFile extends H.Cursor {
 
   open() {
     const self = this
-
     return self.read()
-    .catch( function ( err ) {
-      return self.write()
-    })
+      .catch( function () {
+        return self.write()
+      } )
   }
 
   read( src ) {
@@ -52,11 +51,11 @@ class HortenPersistFile extends H.Cursor {
     src = src || this.file
 
     return fs.readFileAsync( src, 'utf8')
-    .then( this.format == 'yaml' ? yaml.load : JSON.stringify )
-    .then( function ( data ) {
-      self.patch( data )
-      return data
-    })
+      .then( this.format == 'yaml' ? yaml.load : JSON.parse )
+      .then( function ( data ) {
+        self.patch( data )
+        return data
+      })
   }
 
   header() {
@@ -65,7 +64,7 @@ class HortenPersistFile extends H.Cursor {
 
   write( dest ) {
     const self = this
-        , data = this.value
+    const data = this.value
 
     dest = dest || this.file
 
