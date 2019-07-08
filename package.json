@@ -15,7 +15,7 @@
   "author": "Samm Zuest Cooper <samm@sublight.ca>",
   "license": "MIT",
   "dependencies": {
-    "fs-extra-promise": "^0.4.1",
+    "fs-extra": "^8.1.0",
     "horten": "^0.8.3",
     "js-yaml": "^3.6.1",
     "lodash": "^4.16.6",
