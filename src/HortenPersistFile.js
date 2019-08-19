@@ -2,6 +2,7 @@ const H = require('horten')
 const _ = require('lodash')
 const fs = require('fs-extra')
 const pathlib = require('path')
+const globlib = require('glob-promise')
 const yaml = require('js-yaml')
 const moment = require('moment')
 
@@ -43,34 +44,71 @@ class HortenPersistFile extends H.Cursor {
   }
 
   async open() {
-    const self = this
-    return self.read()
-      .catch( function () {
-        return self.write()
-      } )
+    try {
+      await this.read()
+    } catch ( err ) {
+      // File failed to read, could be it doesn't exist yet.
+      await this.write()
+    }
   }
 
   async read( src ) {
     const self = this
-    if ( !src ) {
-
-    }
     src = src || this.file
+    let candidates = await globlib( src )
 
-    return fs.readFile( src, 'utf8')
-      .then( this.format == 'yaml' ? yaml.load : JSON.parse )
-      .then( function ( data ) {
-        self.patch( data )
-        return data
-      })
+    candidates = await Promise.all( candidates.map( async ( file ) => {
+      try {
+        let stat = await fs.stat( file )
+        if ( !stat.size )
+          return 
+
+        return { file, time: stat.mtimeMs }
+      } catch ( err ) {
+        // File's fucked. Nothing to do.
+      }
+    }))
+
+    candidates = _.filter( candidates )
+    candidates = _.orderBy( candidates, ['time'], ['desc'] )
+
+    for ( let i = 0; i < candidates.length; i ++ ) {
+      let file = candidates[i].file
+      let data = await fs.readFile( file, 'utf8' )
+      if ( !data )
+        continue 
+
+      try { 
+        if ( this.format == 'yaml' )
+          data = yaml.safeLoad( data )
+        else 
+          data = JSON.parse( data )
+      } catch ( err ) {
+        // Fucked encoding. Move on.
+        continue
+      }
+
+      if ( _.isObject( data ) ) {
+        this.patch( data )
+        return { file, data }
+      }
+    }
+
   }
 
   fileToWrite() {
-    if ( this.count <= 1 )
-      return this.file 
+    let file = this.file 
+    let questions = file.replace( /[^\?]/g, '' )
+    questions = questions.length
 
-    let file = addExtensionPrefix( this.file, '.' + this.ringIndex )
-    this.ringIndex = ( this.ringIndex + 1 ) % this.count
+    if ( !questions )
+      return file
+
+    let max = Math.pow( 10, questions )
+    let digits = _.padStart( this.ringIndex, questions, '0')
+    let index = 0
+    file = file.replace(/\?/, () => digits[index++] )
+    this.ringIndex = ( this.ringIndex + 1 ) % max
     return file
   }
 
