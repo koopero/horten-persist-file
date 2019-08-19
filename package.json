@@ -1,6 +1,6 @@
 {
   "name": "horten-persist-file",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Persist Horten data to JSON or YAML file",
   "main": "index.js",
   "scripts": {
